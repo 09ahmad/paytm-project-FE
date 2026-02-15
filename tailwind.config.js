@@ -1,8 +1,56 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        background: "oklch(var(--background))",
+        foreground: "oklch(var(--foreground))",
+        card: "oklch(var(--card))",
+        "card-foreground": "oklch(var(--card-foreground))",
+        popover: "oklch(var(--popover))",
+        "popover-foreground": "oklch(var(--popover-foreground))",
+        primary: "oklch(var(--primary))",
+        "primary-foreground": "oklch(var(--primary-foreground))",
+        secondary: "oklch(var(--secondary))",
+        "secondary-foreground": "oklch(var(--secondary-foreground))",
+        muted: "oklch(var(--muted))",
+        "muted-foreground": "oklch(var(--muted-foreground))",
+        accent: "oklch(var(--accent))",
+        "accent-foreground": "oklch(var(--accent-foreground))",
+        destructive: "oklch(var(--destructive))",
+        "destructive-foreground": "oklch(var(--destructive-foreground))",
+        border: "oklch(var(--border))",
+        input: "oklch(var(--input))",
+        ring: "oklch(var(--ring))",
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: "var(--font-sans)",
+        serif: "var(--font-serif)",
+        mono: "var(--font-mono)",
+      },
+      boxShadow: {
+        "2xs": "var(--shadow-2xs)",
+        xs: "var(--shadow-xs)",
+        sm: "var(--shadow-sm)",
+        DEFAULT: "var(--shadow)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
+        xl: "var(--shadow-xl)",
+        "2xl": "var(--shadow-2xl)",
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-in': 'slideIn 0.5s ease-out',
+        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+    },
   },
   plugins: [],
 };

@@ -1,50 +1,137 @@
-
 import { useState } from "react";
 import ButtonWarning from "../components/BottomWarning";
 import Button from "../components/Button";
 import Heading from "../components/Heading";
 import InputBox from "../components/InputBox";
 import SubHeading from "../components/SubHeading";
-import axios from "axios";
+import { authAPI } from "../utils/api";
+import { setToken } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
-
 
 export function Signin() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  return <div className="bg-slate-300 h-screen  flex justify-center">
-    <div className="flex flex-col justify-center">
-      <div className="rounded-lg bg-white w-96 text-center p-2 h-max  px-4">
-        <Heading label={"Sign in"} />
-         <SubHeading label={"Enter your credentials to access your account"} />
-        <InputBox label={"Email"} placeholder={"example@gmail.com"} onChange={(e) => {
-          setUsername(e.target.value)
-        }} />
-        <InputBox label={"password"} placeholder={"set password"} onChange={(e) => {
-          setPassword(e.target.value)
-        }} />
-        <div className="pt-4">
-          <Button label={"Sign in"} onClick={async () => {
-            try {
-              const response = await axios.post("http://localhost:8080/api/v1/user/signin", {
-                username,
-                password
-              })
-              if (!response.data.token) {
-                console.log("Authentication failder bcz token not found")
-                return;
-              }
-              localStorage.setItem("token", response.data.token)
-            } catch (error) {
-              console.error("Error while Sign up")
-            }
-            navigate("/dashboard")
-          }} />
-        </div>
-         <ButtonWarning label={"Don't have an account?"} buttonText={"Sign up"} to={"/signup"} />
+  const handleSubmit = async () => {
+    setError("");
+
+    if (!username.trim() || !password.trim()) {
+      setError("Please enter both email and password");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await authAPI.signin({
+        username: username.trim(),
+        password,
+      });
+
+      if (!response.token) {
+        setError("Authentication failed: Token not received");
+        return;
+      }
+
+      setToken(response.token);
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosError = err as {
+          response?: { status?: number; data?: { message?: string } };
+        };
+        if (axiosError.response?.status === 411) {
+          setError("User does not exist. Please check your credentials.");
+        } else {
+          setError(
+            axiosError.response?.data?.message ||
+              "Invalid credentials. Please try again."
+          );
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex justify-center items-center p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary opacity-10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent opacity-10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-ring opacity-5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
       </div>
-    </div >
-  </div>
+
+      <div className="flex flex-col justify-center w-full max-w-md relative z-10 animate-fade-in">
+        <div className="clay-card rounded-2xl w-full text-center p-8 space-y-6 backdrop-blur-xl">
+          {/* Logo/Brand */}
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg glow-primary">
+              <span className="text-white font-bold text-2xl">P</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Heading label="Welcome Back" />
+            <SubHeading label="Enter your credentials to access your account" />
+          </div>
+
+          {error && (
+            <div className="bg-destructive/20 border border-destructive/50 text-destructive-foreground px-4 py-3 rounded-lg text-sm flex items-center gap-2 animate-slide-in">
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <InputBox
+                label="Email"
+                placeholder="john.doe@example.com"
+                type="email"
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError("");
+                }}
+                value={username}
+              />
+            </div>
+            <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <InputBox
+                label="Password"
+                placeholder="Enter your password"
+                type="password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                value={password}
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <Button
+              label={loading ? "Signing In..." : "Sign In"}
+              onClick={handleSubmit}
+              disabled={loading}
+            />
+          </div>
+
+          <ButtonWarning
+            label="Don't have an account?"
+            buttonText="Sign Up"
+            to="/signup"
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
