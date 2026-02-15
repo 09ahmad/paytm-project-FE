@@ -83,12 +83,6 @@ export function Signup() {
 
       <div className="flex flex-col justify-center w-full max-w-md relative z-10 animate-fade-in">
         <div className="clay-card rounded-2xl w-full text-center p-8 space-y-6 backdrop-blur-xl">
-          {/* Logo/Brand */}
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg glow-primary">
-              <span className="text-white font-bold text-2xl">P</span>
-            </div>
-          </div>
 
           <div className="space-y-2">
             <Heading label="Create Account" />
