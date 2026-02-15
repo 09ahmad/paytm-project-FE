@@ -53,10 +53,6 @@ export function Dashboard() {
     }
   };
 
-  const handleTransferSuccess = () => {
-    fetchBalance();
-    setRefreshTrigger((prev) => prev + 1);
-  };
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -87,7 +83,7 @@ export function Dashboard() {
 
         {/* Users Section */}
         <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <Users onTransferSuccess={handleTransferSuccess} />
+          <Users />
         </div>
 
         {/* Transaction History */}

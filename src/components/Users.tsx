@@ -7,7 +7,7 @@ interface UsersProps {
   onTransferSuccess?: () => void;
 }
 
-export default function Users({ onTransferSuccess }: UsersProps) {
+export default function Users({}: UsersProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -99,7 +99,6 @@ export default function Users({ onTransferSuccess }: UsersProps) {
           <UserCard
             key={user._id}
             user={user}
-            onTransferSuccess={onTransferSuccess}
             index={index}
           />
         ))}
@@ -110,11 +109,10 @@ export default function Users({ onTransferSuccess }: UsersProps) {
 
 interface UserCardProps {
   user: User;
-  onTransferSuccess?: () => void;
   index: number;
 }
 
-function UserCard({ user, onTransferSuccess, index }: UserCardProps) {
+function UserCard({ user, index }: UserCardProps) {
   const navigate = useNavigate();
   const fullName = `${user.firstName} ${user.lastName}`;
   const initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
